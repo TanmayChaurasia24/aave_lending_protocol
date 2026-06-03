@@ -5,3 +5,45 @@ target
 node_modules
 test-ledger
 .yarn
+FULL_PROTOCOL_REFERENCE.rs
+
+# IDE Settings
+.vscode/
+.idea/
+
+# Dependency directories
+node_modules/
+.npm/
+
+# Build artifacts
+target/
+build/
+
+# Solana CLI cache
+.local/
+.solana/
+
+# Debug logs
+*.log
+
+# Python cache
+__pycache__/
+
+# Pillow cache
+.Python
+
+# OS metadata
+.DS_Store
+
+# dotenv
+.env
+.env.*.local
+
+# yarn
+.yarnrc
+
+#anchor
+.anchor
+
+#anchor test-ledger
+test-ledger

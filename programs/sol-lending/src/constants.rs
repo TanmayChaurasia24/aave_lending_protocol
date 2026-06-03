@@ -1,0 +1,13 @@
+const PROTOCOL_SEED: &[u8] = b"protocol";
+const RESERVE_SEED: &[u8] = b"reserve";
+const VAULT_SEED: &[u8] = b"vault";
+const COLLATERAL_MINT_SEED: &[u8] = b"collateral";
+const OBLIGATION_SEED: &[u8] = b"obligation";
+const USER_COLLATERAL_ACCOUNT_SEED: &[u8] = b"user_collateral";
+const WAD: &[u8] = 1_000_000_000_000_000_000;
+const INITIAL_CUMULATIVE_BORROW_RATE: u128 = WAD;
+const BASE_RATE_BPS: u64 = 200;
+const SLOPE1_BPS: u64 = 400;
+const SLOPE2_BPS: u64 = 7500;
+const KINK_UTILIZATION_BPS: u64 = 8000;
+const SLOTS_PER_YEAR: u64 = 78_840_000

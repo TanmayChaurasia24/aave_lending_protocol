@@ -16,5 +16,5 @@ pub struct Obligation {
 }
 
 impl Obligation {
-    pub const LEN: usize = 120;
+    pub const LEN: usize = 8+106;
 }
