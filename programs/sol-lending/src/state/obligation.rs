@@ -11,7 +11,7 @@ pub struct Obligation {
     pub borrowed_amount: u64, // amount borrowed
     pub borrow_index_snapshot: u128, // snapshot of the borrow index at the time of borrowing
     pub last_update_slot: u64,
-    pub isliquidated: bool,
+    pub is_liquidated: bool,
     pub bump: u8,
 }
 

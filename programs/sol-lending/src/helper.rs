@@ -1,8 +1,8 @@
 use crate::constants::*;
-use crate::errors::LendingError;
+use crate::error::LendingError;
 use anchor_lang::prelude::*;
 
-pub fn calculate_intrest_rate_bps (total_borrowed: u64, total_liquidity: u64) -> u64 {
+pub fn calculate_interest_rate_bps (total_borrowed: u64, total_liquidity: u64) -> u64 {
     if total_liquidity == 0 {
         return BASE_RATE_BPS;
     }
@@ -28,7 +28,7 @@ pub fn calculate_intrest_rate_bps (total_borrowed: u64, total_liquidity: u64) ->
 
         let remaining_capacity = 10_000u64.checked_sub(KINK_UTILIZATION_BPS).unwrap();
 
-        let slope2_contribution = SLOPE2_BPS.checked_mul(excess_utilization)
+        let slope2_contribution = SLOPE2_BPS.checked_mul(excess_utilization).unwrap()
         .checked_div(remaining_capacity).unwrap();
 
         BASE_RATE_BPS
@@ -71,4 +71,40 @@ pub fn update_cumulative_borrow_rate(
         .ok_or(LendingError::MathOverflow)?;
 
     Ok(new_rate)
+}
+
+pub fn calculate_outstanding_debt(
+    borrowed_amount: u64,
+    borrow_index_snapshot: u128,
+    current_cumulative_rate: u128,
+) -> Result<u64> {
+    if borrowed_amount == 0 {
+        return Ok(0);
+    }
+
+    let debt: u128 = (borrowed_amount as u128)
+    .checked_mul(current_cumulative_rate)
+    .ok_or(LendingError::MathOverflow)?
+    .checked_div(borrow_index_snapshot)
+    .ok_or(LendingError::MathOverflow)?;
+
+    Ok(debt as u64)
+}
+
+pub fn calculate_health_factor(
+    collateral_value: u64,
+    borrow_value: u64,
+    liquidation_threshold: u64,
+) -> u64 {
+    if borrow_value == 0 {
+        return u64::MAX;
+    }
+
+    (collateral_value as u128)
+        .checked_mul(liquidation_threshold as u128)
+        .unwrap()
+        .checked_mul(100)
+        .unwrap()
+        .checked_div(borrow_value as u128)
+        .unwrap_or(u64::MAX as u128) as u64
 }
