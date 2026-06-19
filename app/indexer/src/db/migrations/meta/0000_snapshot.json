@@ -1,11 +1,637 @@
 {
-  "id": "14cdd688-7acc-41aa-b200-f898dfbac4c3",
+  "id": "ce690e0e-6b19-4197-9526-26b8a2110411",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.obligations": {
-      "name": "obligations",
+    "public.indexer_cursor": {
+      "name": "indexer_cursor",
+      "schema": "",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "slot": {
+          "name": "slot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.indexer_lock": {
+      "name": "indexer_lock",
+      "schema": "",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "holder": {
+          "name": "holder",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pid": {
+          "name": "pid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acquired_at": {
+          "name": "acquired_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.interest_accrual_events": {
+      "name": "interest_accrual_events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "interest_accrual_events_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "tx_signature": {
+          "name": "tx_signature",
+          "type": "varchar(88)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reserve_pubkey": {
+          "name": "reserve_pubkey",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_mint": {
+          "name": "token_mint",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot": {
+          "name": "slot",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "elapsed_seconds": {
+          "name": "elapsed_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "old_cumulative_index": {
+          "name": "old_cumulative_index",
+          "type": "numeric(40, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "new_cumulative_index": {
+          "name": "new_cumulative_index",
+          "type": "numeric(40, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "borrow_rate_bps": {
+          "name": "borrow_rate_bps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "utilisation_rate": {
+          "name": "utilisation_rate",
+          "type": "numeric(10, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "interest_accrual_reserve_slot_idx": {
+          "name": "interest_accrual_reserve_slot_idx",
+          "columns": [
+            {
+              "expression": "reserve_pubkey",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "\"slot\" DESC",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "interest_accrual_events_tx_signature_unique": {
+          "name": "interest_accrual_events_tx_signature_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "tx_signature"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.lending_pools": {
+      "name": "lending_pools",
+      "schema": "",
+      "columns": {
+        "pubkey": {
+          "name": "pubkey",
+          "type": "varchar(44)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "authority": {
+          "name": "authority",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "paused": {
+          "name": "paused",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_reserves": {
+          "name": "total_reserves",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_slot": {
+          "name": "last_slot",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_updated": {
+          "name": "last_updated",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.liquidation_events": {
+      "name": "liquidation_events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "liquidation_events_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "tx_signature": {
+          "name": "tx_signature",
+          "type": "varchar(88)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot": {
+          "name": "slot",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "borrower": {
+          "name": "borrower",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "liquidator": {
+          "name": "liquidator",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collateral_mint": {
+          "name": "collateral_mint",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "debt_mint": {
+          "name": "debt_mint",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collateral_seized": {
+          "name": "collateral_seized",
+          "type": "numeric(28, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "debt_repaid": {
+          "name": "debt_repaid",
+          "type": "numeric(28, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collateral_seized_usd": {
+          "name": "collateral_seized_usd",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "debt_repaid_usd": {
+          "name": "debt_repaid_usd",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "liquidator_profit_usd": {
+          "name": "liquidator_profit_usd",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "health_factor_at_liquidation": {
+          "name": "health_factor_at_liquidation",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "liquidation_borrower_idx": {
+          "name": "liquidation_borrower_idx",
+          "columns": [
+            {
+              "expression": "borrower",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "liquidation_liquidator_idx": {
+          "name": "liquidation_liquidator_idx",
+          "columns": [
+            {
+              "expression": "liquidator",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "liquidation_timestamp_idx": {
+          "name": "liquidation_timestamp_idx",
+          "columns": [
+            {
+              "expression": "timestamp",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "liquidation_events_tx_signature_unique": {
+          "name": "liquidation_events_tx_signature_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "tx_signature"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.oracle_prices": {
+      "name": "oracle_prices",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "oracle_prices_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "token_mint": {
+          "name": "token_mint",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_usd": {
+          "name": "price_usd",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exponent": {
+          "name": "exponent",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "oracle_pubkey": {
+          "name": "oracle_pubkey",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot": {
+          "name": "slot",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "oracle_prices_token_mint_slot_idx": {
+          "name": "oracle_prices_token_mint_slot_idx",
+          "columns": [
+            {
+              "expression": "token_mint",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "\"slot\" DESC",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.reserves": {
+      "name": "reserves",
+      "schema": "",
+      "columns": {
+        "pubkey": {
+          "name": "pubkey",
+          "type": "varchar(44)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token_mint": {
+          "name": "token_mint",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vault": {
+          "name": "vault",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_deposits": {
+          "name": "total_deposits",
+          "type": "numeric(28, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_borrows": {
+          "name": "total_borrows",
+          "type": "numeric(28, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "utilisation_rate": {
+          "name": "utilisation_rate",
+          "type": "numeric(10, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "borrow_rate_bps": {
+          "name": "borrow_rate_bps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cumulative_index": {
+          "name": "cumulative_index",
+          "type": "numeric(40, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ltv_ratio": {
+          "name": "ltv_ratio",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "liquidation_threshold": {
+          "name": "liquidation_threshold",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "liquidation_bonus": {
+          "name": "liquidation_bonus",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "oracle": {
+          "name": "oracle",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_slot": {
+          "name": "last_slot",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_updated": {
+          "name": "last_updated",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "reserve_token_mint_idx": {
+          "name": "reserve_token_mint_idx",
+          "columns": [
+            {
+              "expression": "token_mint",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_positions": {
+      "name": "user_positions",
       "schema": "",
       "columns": {
         "pubkey": {
@@ -26,45 +652,68 @@
           "primaryKey": false,
           "notNull": true
         },
+        "token_mint": {
+          "name": "token_mint",
+          "type": "varchar(44)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "deposited_amount": {
           "name": "deposited_amount",
-          "type": "numeric(38, 0)",
+          "type": "numeric(28, 0)",
           "primaryKey": false,
           "notNull": true
         },
-        "borrowed_amount_principal": {
-          "name": "borrowed_amount_principal",
-          "type": "numeric(38, 0)",
+        "borrowed_amount": {
+          "name": "borrowed_amount",
+          "type": "numeric(28, 0)",
           "primaryKey": false,
           "notNull": true
         },
-        "calculated_debt": {
-          "name": "calculated_debt",
-          "type": "numeric(38, 0)",
+        "borrow_index_at_open": {
+          "name": "borrow_index_at_open",
+          "type": "numeric(40, 0)",
           "primaryKey": false,
           "notNull": true
         },
         "health_factor": {
           "name": "health_factor",
-          "type": "numeric(16, 6)",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "at_risk": {
+          "name": "at_risk",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true
         },
-        "is_liquidated": {
-          "name": "is_liquidated",
-          "type": "boolean",
+        "collateral_value_usd": {
+          "name": "collateral_value_usd",
+          "type": "numeric(20, 8)",
           "primaryKey": false,
-          "notNull": true,
-          "default": false
+          "notNull": true
         },
-        "last_update_slot": {
-          "name": "last_update_slot",
+        "debt_value_usd": {
+          "name": "debt_value_usd",
+          "type": "numeric(20, 8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_slot": {
+          "name": "last_slot",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
-        "updated_at": {
-          "name": "updated_at",
+        "last_updated": {
+          "name": "last_updated",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -72,8 +721,8 @@
         }
       },
       "indexes": {
-        "obligation_owner_idx": {
-          "name": "obligation_owner_idx",
+        "user_position_owner_idx": {
+          "name": "user_position_owner_idx",
           "columns": [
             {
               "expression": "owner",
@@ -87,17 +736,43 @@
           "method": "btree",
           "with": {}
         },
-        "obligation_risk_idx": {
-          "name": "obligation_risk_idx",
+        "user_position_at_risk_idx": {
+          "name": "user_position_at_risk_idx",
+          "columns": [
+            {
+              "expression": "at_risk",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"user_positions\".\"at_risk\" = TRUE",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "user_position_health_factor_idx": {
+          "name": "user_position_health_factor_idx",
           "columns": [
             {
               "expression": "health_factor",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
-            },
+            }
+          ],
+          "isUnique": false,
+          "where": "\"user_positions\".\"health_factor\" IS NOT NULL",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "user_position_reserve_idx": {
+          "name": "user_position_reserve_idx",
+          "columns": [
             {
-              "expression": "is_liquidated",
+              "expression": "reserve",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -110,9 +785,9 @@
         }
       },
       "foreignKeys": {
-        "obligations_reserve_reserves_pubkey_fk": {
-          "name": "obligations_reserve_reserves_pubkey_fk",
-          "tableFrom": "obligations",
+        "user_positions_reserve_reserves_pubkey_fk": {
+          "name": "user_positions_reserve_reserves_pubkey_fk",
+          "tableFrom": "user_positions",
           "tableTo": "reserves",
           "columnsFrom": [
             "reserve"
@@ -124,120 +799,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.reserves": {
-      "name": "reserves",
-      "schema": "",
-      "columns": {
-        "pubkey": {
-          "name": "pubkey",
-          "type": "varchar(44)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "liquidity_mint": {
-          "name": "liquidity_mint",
-          "type": "varchar(44)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "total_liquidity": {
-          "name": "total_liquidity",
-          "type": "numeric(38, 0)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "total_borrowed": {
-          "name": "total_borrowed",
-          "type": "numeric(38, 0)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "cumulative_borrow_rate": {
-          "name": "cumulative_borrow_rate",
-          "type": "numeric(38, 0)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "loan_to_value_ratio": {
-          "name": "loan_to_value_ratio",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "liquidation_threshold": {
-          "name": "liquidation_threshold",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "current_price_usd": {
-          "name": "current_price_usd",
-          "type": "numeric(18, 6)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "is_active": {
-          "name": "is_active",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "last_update_slot": {
-          "name": "last_update_slot",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.system_cursor": {
-      "name": "system_cursor",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(20)",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "'default'"
-        },
-        "last_processed_slot": {
-          "name": "last_processed_slot",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
