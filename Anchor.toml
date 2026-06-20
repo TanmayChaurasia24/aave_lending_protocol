@@ -5,14 +5,14 @@ package_manager = "yarn"
 resolution = true
 skip-lint = false
 
-[programs.localnet]
+[programs.testnet]
 sol_lending = "Gqo5WJ92Ja8G4hsvLA8QKbJcaEB8CBmEnZE5wyQruewa"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "testnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
